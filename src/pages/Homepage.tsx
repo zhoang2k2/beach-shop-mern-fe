@@ -1,39 +1,65 @@
-import { Avatar, Button, Card, Carousel, Layout, Menu } from "antd";
+import { Avatar, Card, Carousel, Col, Flex, Layout, Modal, Row } from "antd";
 import type { ProductType } from "../redux/reducers/productSlice";
 import { useEffect, useState } from "react";
-import Sider from "antd/es/layout/Sider";
-import { Content } from "antd/es/layout/layout";
-import Search, { type SearchProps } from "antd/es/input/Search";
-import type { CSS, InputEvent } from "../types/types";
-import { RedoOutlined } from "@ant-design/icons";
-import { useStickyBox } from "react-sticky-box";
+import type { CSS } from "../types/types";
 import type { CategoryType } from "../redux/reducers/categorySlice";
 import type { SizeType } from "../redux/reducers/sizeSlice";
-import type { ColorType } from "../redux/reducers/colorSlice";
+import Meta from "antd/es/card/Meta";
+import { Link } from "react-router-dom";
+import { RightOutlined } from "@ant-design/icons";
+import { createPortal } from "react-dom";
+import { Content, Footer, Header } from "antd/es/layout/layout";
+import Sider from "antd/es/layout/Sider";
 
-const { Meta } = Card;
 
 type HomepageProps = {
   products: ProductType[];
   categories: CategoryType[];
   sizes: SizeType[];
-  colors: ColorType[];
 };
 
-function Homepage({ products, categories, sizes, colors }: HomepageProps) {
+function Homepage({ ...props }: HomepageProps) {
   const contentStyle: CSS = {
     margin: "auto",
-    height: "450px",
+    height: "600px",
     width: "90%",
     color: "#fff",
     textAlign: "center",
     background: "#364d79",
+    marginTop: "100px",
   };
 
   const imageStyle: CSS = {
     height: "100%",
     width: "100%",
     objectFit: "cover",
+  };
+
+  const modalHeaderStyle: CSS = {
+    textAlign: "center",
+    height: 64,
+    paddingInline: 48,
+    lineHeight: "64px",
+  };
+
+  const modalSiderStyle: CSS = {
+    textAlign: "center",
+    lineHeight: "120px",
+  };
+
+  const modalContentStyle: CSS = {
+    textAlign: "center",
+    minHeight: 120,
+    lineHeight: "120px",
+  };
+
+  const modalFooterStyle: CSS = {
+    textAlign: "center",
+  };
+
+  const modalLayoutStyle = {
+    borderRadius: 8,
+    overflow: "hidden",
   };
 
   const [loading, setLoading] = useState(true);
@@ -44,153 +70,40 @@ function Homepage({ products, categories, sizes, colors }: HomepageProps) {
     }, 1000);
   }, []);
 
-  const siderStyle: CSS = {
-    textAlign: "center",
-    lineHeight: "120px",
-    color: "#fff",
-    backgroundColor: "#1677ff",
+  const topItems = props.products.filter((item) => item.rating >= 4.5);
+  const renderTopItems = topItems.slice(0, 5);
+
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const showModal = (item: ProductType) => {
+    setSelectedItem(item);
+    setOpen(true);
   };
 
-  const [search, setSearch] = useState(false);
-  const [inputVal, setInputVal] = useState("");
-  const handleOnChange = (e: InputEvent) => {
-    setInputVal(e.target.value);
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
   };
 
-  const [searchVals, setSearchVals] = useState<ProductType[]>([]);
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
-  const onSearch: SearchProps["onSearch"] = () => {
-    if (inputVal !== "") {
-      setSearch(true);
-      setTimeout(() => {
-        const newArray = products.filter(
-          (list) =>
-            list.brand
-              .toLocaleLowerCase()
-              .includes(inputVal.toLocaleLowerCase()) ||
-            list.description
-              .toLocaleLowerCase()
-              .includes(inputVal.toLocaleLowerCase()) ||
-            list.name.toLocaleLowerCase().includes(inputVal.toLocaleLowerCase())
-        );
-        setSearchVals(newArray);
-        setSearch(false);
-      }, 300);
-    } else {
-      return;
+  const [selectedItem, setSelectedItem] = useState<ProductType>();
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const handleClickImage = (image: string) => {
+    setSelectedImage(image);
+  };
+
+  useEffect(() => {
+    if (selectedItem) {
+      setSelectedImage(selectedItem?.images[0]);
     }
-  };
-  const handleReset = () => {
-    setInputVal("");
-    setSelectedCategories([]);
-    setSearchVals(products);
-  };
-
-  const StickyBox = useStickyBox({ offsetTop: 20, offsetBottom: 20 });
-
-  const filterItems = [
-    {
-      key: "filter1",
-      label: "Catagories",
-      children: categories.map((item) => {
-        return {
-          key: item.category_id,
-          label: item.name,
-        };
-      }),
-    },
-    {
-      key: "filter2",
-      label: "Sizes",
-      children: sizes.map((item) => {
-        return {
-          key: item.name,
-          label: item.name,
-        };
-      }),
-    },
-    {
-      key: "filter3",
-      label: "Colors",
-      children: colors.map((item) => {
-        return {
-          key: item.name,
-          label: item.name,
-        };
-      }),
-    },
-  ];
-
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-
-  const sizesArray = sizes.map((item) => item.name);
-
-  const handleSelect = ({ key }: { key: string }) => {
-    if (sizesArray.includes(key)) {
-      setSelectedSizes((prevSizes) => {
-        const newSizes = [...prevSizes, key];
-        const updateRenderItems = products.filter(
-          (item) =>
-            (selectedCategories.length === 0 ||
-              selectedCategories.includes(item.category_id)) &&
-            newSizes.every((size) => item.sizes.includes(size))
-        );
-        setSearchVals(updateRenderItems);
-        return newSizes;
-      });
-    } else {
-      setSelectedCategories((prevCategories) => {
-        const newKeys = [...prevCategories, key];
-        const updateRenderItems = products.filter(
-          (item) =>
-            (selectedSizes.length === 0 ||
-              selectedSizes.every((size) => item.sizes.includes(size))) &&
-            newKeys.includes(item.category_id)
-        );
-        setSearchVals(updateRenderItems);
-        return newKeys;
-      });
-    }
-  };
-
-  const handleDeselect = ({ key }: { key: string }) => {
-    if (sizesArray.includes(key)) {
-      setSelectedSizes((prevSizes) => {
-        const newSizes = prevSizes.filter((k) => k !== key);
-        const updateRenderItems = products.filter(
-          (item) =>
-            (selectedCategories.length === 0 ||
-              selectedCategories.includes(item.category_id)) &&
-            newSizes.every((size) => item.sizes.includes(size))
-        );
-        setSearchVals(updateRenderItems);
-        return newSizes;
-      });
-    } else {
-      setSelectedCategories((prevCategories) => {
-        const newKeys = prevCategories.filter((k) => k !== key);
-        const updateRenderItems = products.filter(
-          (item) =>
-            (selectedSizes.length === 0 ||
-              selectedSizes.every((size) => item.sizes.includes(size))) &&
-            newKeys.includes(item.category_id)
-        );
-        setSearchVals(updateRenderItems);
-        return newKeys;
-      });
-    }
-  };
-
-  // useEffect(() => {
-  //   if (
-  //     selectedCategories.length === 0 ||
-  //     selectedSizes.length === 0 ||
-  //     (selectedCategories.length === 0 && selectedSizes.length === 0)
-  //   ) {
-  //     setSearchVals(products);
-  //   }
-  // }, [products, selectedCategories.length, selectedSizes.length]);
+  }, [selectedItem]);
 
   return (
     <>
@@ -207,70 +120,104 @@ function Homepage({ products, categories, sizes, colors }: HomepageProps) {
         </div>
       </Carousel>
 
-      <div className="product-container">
-        <h2>SHOPPING</h2>
-        <div className="product-action">
-          <Button type="primary" shape="circle" onClick={handleReset}>
-            <RedoOutlined />
-          </Button>
-          {search ? (
-            <Search
-              placeholder="input search text"
-              enterButton
-              loading
-              value={inputVal}
-              onChange={handleOnChange}
-              onSearch={onSearch}
-            />
-          ) : (
-            <Search
-              placeholder="input search text"
-              enterButton
-              value={inputVal}
-              onChange={handleOnChange}
-              onSearch={onSearch}
-            />
-          )}
+      <div className="products-preview">
+        <div className="products-preview-title">
+          <Row>
+            <Flex
+              align="center"
+              justify="space-between"
+              style={{ width: "100%" }}
+            >
+              <Col>
+                <h2>our best seller</h2>
+              </Col>
+              <Col>
+                <Link to="/shop">
+                  See more <RightOutlined />
+                </Link>
+              </Col>
+            </Flex>
+          </Row>
         </div>
-        <Layout>
-          <Sider width="20%" style={siderStyle}>
-            <aside ref={StickyBox} className="sticky-container">
-              <div className="categories sticky">
-                <Menu
-                  defaultOpenKeys={["filter1"]}
-                  mode="inline"
-                  items={filterItems}
-                  selectedKeys={[...selectedCategories, ...selectedSizes]}
-                  onSelect={handleSelect}
-                  onDeselect={handleDeselect}
-                />
-              </div>
-            </aside>
-          </Sider>
 
-          <Content>
-            <div className="product-list">
-              {searchVals &&
-                searchVals.map((item) => {
+        <div className="products-preview-list">
+          <Row>
+            <Flex justify="center" style={{ width: "100%" }} gap={20}>
+              {renderTopItems &&
+                renderTopItems.map((item) => {
                   return (
-                    <Card
-                      style={{ width: 300, marginTop: 16 }}
-                      loading={loading}
-                      key={item._id}
-                      hoverable
-                    >
-                      <Meta
-                        avatar={<Avatar src={item.images[0]} shape="square" />}
-                        title={`${item.brand} - ` + item.description}
-                        description={"$" + item.price + ` (${item.sizes})`}
-                      />
-                    </Card>
+                    <Col className="gutter-row" span={4} key={item._id}>
+                      <Card
+                        style={{ width: "100%" }}
+                        loading={loading}
+                        hoverable
+                        onClick={() => showModal(item)}
+                      >
+                        <Meta
+                          avatar={
+                            <Avatar src={item.images[0]} shape="square" />
+                          }
+                          title={item.description}
+                          description={
+                            <div className="product-content">
+                              <span>{item.brand}</span>
+                              <p>${item.price}</p>
+                              <p>{item.rating} rated recently</p>
+                            </div>
+                          }
+                        />
+                      </Card>
+                    </Col>
                   );
                 })}
-            </div>
-          </Content>
-        </Layout>
+            </Flex>
+          </Row>
+        </div>
       </div>
+
+      {createPortal(
+        <Modal
+          open={open}
+          onOk={handleOk}
+          confirmLoading={confirmLoading}
+          onCancel={handleCancel}
+        >
+          {selectedItem && (
+            <>
+              <Layout style={modalLayoutStyle}>
+                <Header style={modalHeaderStyle}>Header</Header>
+                <Layout>
+                  <Sider width="50%" style={modalSiderStyle}>
+                    <Row>
+                      <Col span={6}>
+                        {selectedItem.images.map((image) => {
+                          return (
+                            <img
+                              className={
+                                selectedImage === image ? "selected-img" : ""
+                              }
+                              onClick={() => handleClickImage(image)}
+                              key={image}
+                              src={image}
+                              alt="product img"
+                            />
+                          );
+                        })}
+                      </Col>
+                      <Col span={18}>
+                        <img src={selectedImage} alt="product img" />
+                      </Col>
+                    </Row>
+                  </Sider>
+                  <Content style={modalContentStyle}>Content</Content>
+                </Layout>
+                <Footer style={modalFooterStyle}>Footer</Footer>
+              </Layout>
+            </>
+          )}
+        </Modal>,
+        document.body
+      )}
     </>
   );
 }

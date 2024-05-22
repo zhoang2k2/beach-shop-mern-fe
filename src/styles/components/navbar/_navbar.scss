@@ -4,6 +4,13 @@
   display: flex;
   position: relative;
   justify-content: space-around;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0px 0px 5px 0px #000;
+
+  background-color: #fff;
   z-index: 999;
 
   ul {
@@ -11,9 +18,8 @@
     &::before {
       content: none;
     }
-
     li {
-      padding: 15px;
+      padding: 0 15px;
     }
   }
 

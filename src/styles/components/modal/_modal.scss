@@ -1,0 +1,22 @@
+.ant-modal-root {
+  .ant-modal-wrap {
+    .ant-modal {
+      width: 1360px !important;
+      min-height: 1360px !important;
+      margin: auto;
+
+      .ant-modal-content {
+        .ant-modal-close {
+        }
+
+        .ant-modal-body {
+          div,
+          header,
+          footer {
+            background-color: #fff;
+          }
+        }
+      }
+    }
+  }
+}

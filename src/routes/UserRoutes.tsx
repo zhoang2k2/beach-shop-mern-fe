@@ -4,15 +4,16 @@ import type { ProductType } from "../redux/reducers/productSlice";
 import type { CategoryType } from "../redux/reducers/categorySlice";
 import type { SizeType } from "../redux/reducers/sizeSlice";
 import type { ColorType } from "../redux/reducers/colorSlice";
+import Shoppage from "../pages/Shoppage";
 
 export type UserRoutesProps = {
   products: ProductType[];
   categories: CategoryType[];
   sizes: SizeType[];
-  colors: ColorType[]
+  colors: ColorType[];
 };
 
-function UserRoutes({ products, categories, sizes, colors }: UserRoutesProps) {
+function UserRoutes({ ...props }: UserRoutesProps) {
   return (
     <>
       <Routes>
@@ -20,10 +21,20 @@ function UserRoutes({ products, categories, sizes, colors }: UserRoutesProps) {
           path="/"
           element={
             <Homepage
-              products={products}
-              categories={categories}
-              sizes={sizes}
-              colors={colors}
+              products={props.products}
+              categories={props.categories}
+              sizes={props.sizes}
+            />
+          }
+        />
+
+        <Route
+          path="/shop"
+          element={
+            <Shoppage
+              products={props.products}
+              categories={props.categories}
+              sizes={props.sizes}
             />
           }
         />
