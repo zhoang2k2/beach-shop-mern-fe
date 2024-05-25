@@ -1,10 +1,11 @@
 // MIXIN
 
 // BASE
-@import "./base/_reset.scss";
+@import "./base/_reset";
 
 // COMPONENT
 @import "./components/navbar/navbar";
 @import "./components/homepage/homepage";
 @import "./components/modal/modal";
-@import "./components/card/ProductCard.scss";
+@import "./components/card/ProductCard";
+@import "./components/footer/footer";

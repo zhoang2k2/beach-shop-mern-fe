@@ -1,4 +1,4 @@
-import { Avatar, Card, Carousel, Col, Flex, Row } from "antd";
+import { Avatar, Card, Carousel, Col, Flex, Input, Row } from "antd";
 import type { ProductType } from "../redux/reducers/productSlice";
 import { useEffect, useState } from "react";
 import type { CSS } from "../types/types";
@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { RightOutlined } from "@ant-design/icons";
 import { createPortal } from "react-dom";
 import DetailModal from "../components/user/modal/DetailModal";
+import TextArea from "antd/es/input/TextArea";
 
 type HomepageProps = {
   products: ProductType[];
@@ -44,7 +45,7 @@ function Homepage({ ...props }: HomepageProps) {
   const topItems = props.products.filter((item) => item.rating >= 4.5);
   const renderTopItems = topItems.slice(0, 5);
 
-  const cheapItems = props.products.filter((item) => item.price <= 20);
+  const cheapItems = props.products.filter((item) => item.price <= 10);
   const renderCheapItems = cheapItems.slice(0, 5);
 
   const [open, setOpen] = useState(false);
@@ -165,41 +166,73 @@ function Homepage({ ...props }: HomepageProps) {
     },
   ];
 
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("Change:", e.target.value);
+  };
+
   return (
     <>
       <Carousel autoplay>
         <div>
           <h3 style={contentStyle}>
-            <img src="https://i.imgur.com/KCqTFg9.png" style={imageStyle} />
+            <img src="https://i.imgur.com/DSTBath.jpeg" style={imageStyle} />
           </h3>
         </div>
         <div>
           <h3 style={contentStyle}>
-            <img src="https://i.imgur.com/EgdXbDL.png" style={imageStyle} />
+            <img src="https://i.imgur.com/mkMpbSE.jpeg" style={imageStyle} />
           </h3>
         </div>
       </Carousel>
 
-      <div className="sub-slider">
-        <div className="sub-slider-container">
-          <div className="card-list">
-            {logos.map((data) => (
-              <div className="company-card" key={data.id}>
-                <img src={data.url} alt={data.name} />
-              </div>
-            ))}
-          </div>
-          <div className="card-list">
-            {logos.map((data) => (
-              <div className="company-card" key={data.id}>
-                <img src={data.url} alt={data.name} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <Row className="customer">
+        <h2>customer feedback</h2>
+        <Flex gap={25}>
+          <Card
+            hoverable
+            cover={<img alt="example" src="https://i.imgur.com/nTTVMKX.jpeg" />}
+          >
+            <Meta
+              title="Customer A"
+              description="I am extremely pleased with the superior quality of the products and the exceptional service provided. I appreciate the attention to detail and the prompt customer support, which exceeds my expectations."
+            />
+          </Card>
 
-      <Flex vertical gap={50}>
+          <Card
+            hoverable
+            cover={<img alt="example" src="https://i.imgur.com/UZZ1HoJ.jpeg" />}
+          >
+            <Meta
+              title="Customer B"
+              description="I am extremely pleased with the superior quality of the products and the exceptional service provided. I appreciate the attention to detail and the prompt customer support, which exceeds my expectations."
+            />
+          </Card>
+
+          <Card
+            hoverable
+            cover={<img alt="example" src="https://i.imgur.com/3JiqYYA.jpeg" />}
+          >
+            <Meta
+              title="Customer C"
+              description="I am extremely pleased with the superior quality of the products and the exceptional service provided. I appreciate the attention to detail and the prompt customer support, which exceeds my expectations."
+            />
+          </Card>
+
+          <Card
+            hoverable
+            cover={<img alt="example" src="https://i.imgur.com/EiBarM3.jpeg" />}
+          >
+            <Meta
+              title="Customer D"
+              description="I am extremely pleased with the superior quality of the products and the exceptional service provided. I appreciate the attention to detail and the prompt customer support, which exceeds my expectations."
+            />
+          </Card>
+        </Flex>
+      </Row>
+
+      <Flex vertical>
         <Row>
           <div className="products-preview">
             <div className="products-preview-title">
@@ -314,6 +347,76 @@ function Homepage({ ...props }: HomepageProps) {
           </div>
         </Row>
       </Flex>
+
+      <div className="sub-slider">
+        <div className="sub-slider-container">
+          <div className="card-list">
+            {logos.map((data) => (
+              <div className="company-card" key={data.id}>
+                <img src={data.url} alt={data.name} />
+              </div>
+            ))}
+          </div>
+          <div className="card-list">
+            {logos.map((data) => (
+              <div className="company-card" key={data.id}>
+                <img src={data.url} alt={data.name} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Row className="banner">
+        <Col span={14}>
+          <img src="https://i.imgur.com/OemDj2E.jpg" alt="1" />
+          <div className="banner-content">
+            <span>hello customers!!</span>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+              eleifend sollicitudin tellus, cursus fringilla ex lobortis vel.
+              Pellentesque nec sem quis massa faucibus laoreet eu vel ipsum.
+              Fusce mollis augue sit amet porta luctus. In in orci in nulla
+              lobortis tristique. Nunc bibendum finibus iaculis. In imperdiet
+              eleifend feugiat. Mauris.
+            </p>
+            <button>
+              <Link to="/shop">Shop now!</Link>
+            </button>
+          </div>
+        </Col>
+        <Col span={10}>
+          <Flex gap={10} vertical>
+            <img src="https://i.imgur.com/1eohAla.jpg" alt="2" />
+            <img src="https://i.imgur.com/Zd7kM6v.jpeg" alt="3" />
+          </Flex>
+        </Col>
+      </Row>
+
+      <Row className="contact">
+        <Flex justify="space-evenly" align="center" gap={50}>
+          <video
+            src="2231485-uhd_3840_2160_24fps.mp4"
+            autoPlay
+            loop
+            muted
+          ></video>
+
+          <div className="contact-content">
+            <p>Get E-mail update of our latest products and special offers</p>
+            <Input size="large" placeholder="Enter your email" prefix="@" />
+
+            <TextArea
+              showCount
+              maxLength={150}
+              onChange={onChange}
+              placeholder="Any questions for us?"
+              style={{ height: 120, resize: "none" }}
+            />
+            <button>Submit</button>
+          </div>
+        </Flex>
+      </Row>
 
       {createPortal(
         <DetailModal

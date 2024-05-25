@@ -176,7 +176,7 @@ function Shoppage({ ...props }: ShoppageProps) {
 
   useEffect(() => {
     window.scrollTo({
-      top: 700,
+      top: 50,
       behavior: "smooth",
     });
   }, [page]);

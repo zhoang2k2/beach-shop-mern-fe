@@ -1,38 +1,32 @@
-.ant-flex {
-  .ant-col {
-    width: 100%;
-    min-width: 350px;
-    
-    .ant-card {
-      padding: 0px 20px 20px;
-      margin-top: 0 !important;
 
-      .ant-card-body {
-        .ant-card-meta {
-          flex-direction: column;
+.ant-card {
+  padding: 0px 20px 20px;
+  margin-top: 0 !important;
 
-          .ant-card-meta-avatar {
-            .ant-avatar-image {
-              width: 100%;
-              height: 300px;
+  .ant-card-body {
+    .ant-card-meta {
+      flex-direction: column;
 
-              img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-              }
-            }
-          }
+      .ant-card-meta-avatar {
+        .ant-avatar-image {
+          width: 100%;
+          height: 300px;
 
-          .ant-card-meta-detail {
+          img {
             width: 100%;
-            padding-top: 10px;
-
-            .ant-card-meta-title {
-              font-size: 18px;
-              padding-bottom: 5px;
-            }
+            height: 100%;
+            object-fit: contain;
           }
+        }
+      }
+
+      .ant-card-meta-detail {
+        width: 100%;
+        padding-top: 10px;
+
+        .ant-card-meta-title {
+          font-size: 18px;
+          padding-bottom: 5px;
         }
       }
     }
