@@ -13,6 +13,11 @@ function UserNavbar() {
   const currentPath = location.pathname;
   const [selectedKey, setSelectedKey] = useState("home");
 
+  // const [open, setOpen] = useState(false);
+  // const showDrawer = () => {
+  //   setOpen(true);
+  // };
+
   useEffect(() => {
     let key = "home";
     switch (currentPath) {
@@ -29,7 +34,6 @@ function UserNavbar() {
         key = "home";
         break;
     }
-
     setSelectedKey(key);
   }, [currentPath]);
 
@@ -40,11 +44,11 @@ function UserNavbar() {
     },
     {
       key: "about",
-      label: "About",
+      label: <Link to={"/"}>About</Link>,
     },
     {
       key: "order",
-      label: "Order",
+      label: <Link to={"/"}>Order</Link>,
     },
     {
       key: "shop",

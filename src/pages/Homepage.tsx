@@ -1,4 +1,4 @@
-import { Avatar, Card, Carousel, Col, Flex, Input, Row } from "antd";
+import { Avatar, Card, Carousel, Col, Empty, Flex, Input, Row } from "antd";
 import type { ProductType } from "../redux/reducers/productSlice";
 import { useEffect, useState } from "react";
 import type { CSS } from "../types/types";
@@ -257,7 +257,7 @@ function Homepage({ ...props }: HomepageProps) {
             <div className="products-preview-list">
               <Row>
                 <Flex justify="center" style={{ width: "100%" }} gap={20}>
-                  {renderTopItems &&
+                  {renderTopItems.length > 0 ? (
                     renderTopItems.map((item) => {
                       return (
                         <Col className="gutter-row" span={4} key={item._id}>
@@ -283,7 +283,10 @@ function Homepage({ ...props }: HomepageProps) {
                           </Card>
                         </Col>
                       );
-                    })}
+                    })
+                  ) : (
+                    <Empty />
+                  )}
                 </Flex>
               </Row>
             </div>
@@ -300,7 +303,7 @@ function Homepage({ ...props }: HomepageProps) {
                   style={{ width: "100%" }}
                 >
                   <Col>
-                    <h2>Under $15 items</h2>
+                    <h2>Under $10 items</h2>
                   </Col>
                   <Col>
                     <Link to="/shop">
@@ -314,7 +317,7 @@ function Homepage({ ...props }: HomepageProps) {
             <div className="products-preview-list">
               <Row>
                 <Flex justify="center" style={{ width: "100%" }} gap={20}>
-                  {renderCheapItems &&
+                  {renderCheapItems.length > 0 ? (
                     renderCheapItems.map((item) => {
                       return (
                         <Col className="gutter-row" span={4} key={item._id}>
@@ -340,7 +343,10 @@ function Homepage({ ...props }: HomepageProps) {
                           </Card>
                         </Col>
                       );
-                    })}
+                    })
+                  ) : (
+                    <Empty />
+                  )}
                 </Flex>
               </Row>
             </div>
@@ -380,9 +386,10 @@ function Homepage({ ...props }: HomepageProps) {
               lobortis tristique. Nunc bibendum finibus iaculis. In imperdiet
               eleifend feugiat. Mauris.
             </p>
-            <button>
-              <Link to="/shop">Shop now!</Link>
-            </button>
+
+            <Link to="/shop">
+              <button>Shop now!</button>
+            </Link>
           </div>
         </Col>
         <Col span={10}>
