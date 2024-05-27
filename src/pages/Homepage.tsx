@@ -10,7 +10,7 @@ import { RightOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import ProductCard from "../components/user/productCard/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect} from "react";
 
 function Homepage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +19,13 @@ function Homepage() {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   const contentStyle: CSS = {
     margin: "auto",
@@ -177,7 +184,7 @@ function Homepage() {
                     <h2>our best seller</h2>
                   </Col>
                   <Col>
-                    <Link to="/shop">
+                    <Link to="/shop/best-seller" >
                       See more <RightOutlined />
                     </Link>
                   </Col>
@@ -187,7 +194,7 @@ function Homepage() {
 
             <div className="products-preview-list">
               <Row>
-                <Flex justify="center" style={{ width: "100%" }} gap={20}>
+                <Flex justify="center" style={{ width: "100%" }} gap={10}>
                   <ProductCard mode="homepage" renderItems={renderTopItems} />
                 </Flex>
               </Row>
@@ -209,7 +216,7 @@ function Homepage() {
                     <h2>Under $10 items</h2>
                   </Col>
                   <Col>
-                    <Link to="/shop">
+                    <Link to="/shop/cheap-price">
                       See more <RightOutlined />
                     </Link>
                   </Col>
@@ -219,7 +226,7 @@ function Homepage() {
 
             <div className="products-preview-list">
               <Row>
-                <Flex justify="center" style={{ width: "100%" }} gap={20}>
+                <Flex justify="center" style={{ width: "100%" }} gap={10}>
                   <ProductCard mode="homepage" renderItems={renderCheapItems} />
                 </Flex>
               </Row>

@@ -102,6 +102,19 @@ function DetailModal({
     }
   };
 
+  const renderColorOpts = selectedItem.colors.map((color) => {
+    return (
+      <div
+        onClick={() => handleSelectedColor(selectedItem._id, color)}
+        className={
+          selectedColor[selectedItem._id] === color ? "selected-color" : ""
+        }
+      >
+        <div className="color-display" style={{ backgroundColor: color }}></div>
+      </div>
+    );
+  });
+
   const handleSelectedSize = (itemId: string, size: string) => {
     if (selectedSize[itemId] === size) {
       handleRemoveSize(itemId);
@@ -109,6 +122,19 @@ function DetailModal({
       handleAddSize(itemId, size);
     }
   };
+
+  const renderSizeOpts = selectedItem.sizes.map((size) => {
+    return (
+      <div
+        onClick={() => handleSelectedSize(selectedItem._id, size)}
+        className={
+          selectedSize[selectedItem._id] === size ? "selected-size" : ""
+        }
+      >
+        <div className="size-display">{size}</div>
+      </div>
+    );
+  });
 
   return (
     <>
@@ -172,46 +198,13 @@ function DetailModal({
                     <p className="color product-option">
                       <Flex gap={15}>
                         <span>color options</span>
-                        {selectedItem.colors.map((color) => {
-                          return (
-                            <div
-                              onClick={() =>
-                                handleSelectedColor(selectedItem._id, color)
-                              }
-                              className={
-                                selectedColor[selectedItem._id] === color
-                                  ? "selected-color"
-                                  : ""
-                              }
-                            >
-                              <div
-                                className="color-display"
-                                style={{ backgroundColor: color }}
-                              ></div>
-                            </div>
-                          );
-                        })}
+                        {renderColorOpts}
                       </Flex>
                     </p>
                     <p className="size product-option">
                       <Flex gap={15}>
                         <span>size options</span>
-                        {selectedItem.sizes.map((size) => {
-                          return (
-                            <div
-                              onClick={() =>
-                                handleSelectedSize(selectedItem._id, size)
-                              }
-                              className={
-                                selectedSize[selectedItem._id] === size
-                                  ? "selected-size"
-                                  : ""
-                              }
-                            >
-                              <div className="size-display">{size}</div>
-                            </div>
-                          );
-                        })}
+                        {renderSizeOpts}
                       </Flex>
                     </p>
                     <Button
@@ -232,6 +225,7 @@ function DetailModal({
           </>
         )}
       </Modal>
+
       {createPortal(
         <Cart onCloseCart={() => {}} items={addItemsToCart} />,
         document.body

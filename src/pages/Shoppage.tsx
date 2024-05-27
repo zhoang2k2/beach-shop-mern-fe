@@ -21,6 +21,7 @@ import {
 import { fetchSizes, selectSizeState } from "../redux/reducers/sizeSlice";
 import ProductCard from "../components/user/productCard/ProductCard";
 import Countdown, { type CountdownProps } from "antd/es/statistic/Countdown";
+import { useLocation } from "react-router-dom";
 
 function Shoppage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +35,39 @@ function Shoppage() {
     dispatch(fetchCategory());
     dispatch(fetchSizes());
   }, [dispatch]);
+
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const [itemsByMode, setItemsByMode] = useState<ProductType[]>([]);
+
+  useEffect(() => {
+    let items = [...products];
+    switch (currentPath) {
+      case "/shop/cheap-price":
+        items = products.filter((item) => item.rating >= 4.5);
+        break;
+      case "/shop/best-seller":
+        items = products.filter((item) => item.rating < 10);
+        break;
+      default:
+        items = [...products];
+        break;
+    }
+    setItemsByMode(items);
+  }, [currentPath, products]);
+
+  // useEffect(() => {
+  //   if (mode === "best") {
+  //     const newProducts = );
+  //     return (setItemsByMode(newProducts));
+  //   } else if (mode === "cheap") {
+  //     const newProducts = products.filter((item) => item.price <= 10);
+  //     return setItemsByMode(newProducts);
+  //   } else {
+  //     return setItemsByMode(products);
+  //   }
+  // }, [mode, products]);
 
   const siderStyle: CSS = {
     textAlign: "center",
@@ -53,7 +87,7 @@ function Shoppage() {
     if (inputVal !== "") {
       setSearch(true);
       setTimeout(() => {
-        const newArray = products.filter(
+        const newArray = itemsByMode.filter(
           (list) =>
             list.brand
               .toLocaleLowerCase()
@@ -184,10 +218,17 @@ function Shoppage() {
 
   useEffect(() => {
     window.scrollTo({
-      top: 50,
+      top: 550,
       behavior: "smooth",
     });
   }, [page]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -195,21 +236,34 @@ function Shoppage() {
     console.log("Change:", e.target.value);
   };
 
-  const deadline = Date.now() + 1000 * 60 * 60 * 24 * 30 * 4;
+  const deadline = Date.UTC(2024, 9, 30, 23, 59, 59);
   const onFinish: CountdownProps["onFinish"] = () => {
     console.log("finished!");
   };
 
   return (
     <>
-      <Row style={{marginTop: 200}}>
-        DUE TO OCTOBER
-        <Countdown title="Countdown" value={deadline} onFinish={onFinish} />
+      <Row className="shop-banner">
+        <img src="https://i.imgur.com/xSvxccl.jpeg" alt="banner" />
+        <div className="banner-text">
+          <Flex justify="center" align="center" vertical>
+            <p>SUMMER DEALS DUE OCTOBER</p>
+            <Countdown
+              title="Countdown"
+              value={deadline}
+              onFinish={onFinish}
+              format="D day H hour m ' s"
+            />
+          </Flex>
+        </div>
       </Row>
 
-      <Flex>
+      <Flex justify="center" align="center">
         <div className="product-container">
-          <h2>LET'S SHOPPING</h2>
+          <Row>
+            <h2>LET'S SHOPPING</h2>
+          </Row>
+
           <div className="product-action">
             <Button type="primary" shape="circle" onClick={handleReset}>
               <RedoOutlined />
@@ -233,6 +287,7 @@ function Shoppage() {
               />
             )}
           </div>
+
           <Layout>
             <Sider width="17.5%" style={siderStyle}>
               <aside ref={StickyBox} className="sticky-container">

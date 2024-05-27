@@ -1,14 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import UserRoutes, { type UserRoutesProps } from "./UserRoutes";
+import UserRoutes from "./UserRoutes";
 
-type AppProps = {
-  userRouterProps: UserRoutesProps;
-};
-
-function AppRoute({ userRouterProps }: AppProps) {
+function AppRoute() {
   return (
     <Routes>
-      <Route path="/*" element={<UserRoutes {...userRouterProps} />} />
+      <Route path="/*" element={<UserRoutes />} />
     </Routes>
   );
 }

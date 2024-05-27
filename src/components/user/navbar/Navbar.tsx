@@ -9,18 +9,45 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import Cart from "../cart/Cart";
+import CustomerRegister from "../modal/CustomerRegister";
+import CustomerLogin from "../modal/CustomerLogin";
 
 function UserNavbar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [selectedKey, setSelectedKey] = useState("home");
 
-  const [open, setOpen] = useState(false);
-  const showDrawer = () => {
-    setOpen(true);
+  const [open, setOpen] = useState({
+    detail: false,
+    login: false,
+    register: false,
+  });
+  const showDetailModal = () => {
+    setOpen({ ...open, detail: true });
   };
   const handleCloseCart = () => {
-    setOpen(false);
+    setOpen({ ...open, detail: false });
+  };
+
+  // const showCustomerRegister = () => {
+  //   setOpen({ ...open, register: true });
+  // };
+  const handleCloseRegister = () => {
+    setOpen({ ...open, register: false });
+  };
+
+  const showCustomerLogin = () => {
+    setOpen({ ...open, login: true });
+  };
+  const handleCloseLogin = () => {
+    setOpen({ ...open, login: false });
+  };
+
+  const handleSwitchToLogin = () => {
+    setOpen({ ...open, register: false, login: true });
+  };
+  const handleSwitchToRegister = () => {
+    setOpen({ ...open, register: true, login: false });
   };
 
   useEffect(() => {
@@ -49,11 +76,11 @@ function UserNavbar() {
     },
     {
       key: "about",
-      label: <Link to={"/"}>About</Link>,
+      label: <Link to={"/about"}>About</Link>,
     },
     {
       key: "order",
-      label: <Link to={"/"}>Order</Link>,
+      label: <Link to={"/order"}>Order</Link>,
     },
     {
       key: "shop",
@@ -64,11 +91,11 @@ function UserNavbar() {
   const items_2 = [
     {
       key: "cart",
-      label: <ShoppingCartOutlined onClick={showDrawer} />,
+      label: <ShoppingCartOutlined onClick={showDetailModal} />,
     },
     {
       key: "user",
-      label: <UserOutlined />,
+      label: <UserOutlined onClick={showCustomerLogin} />,
     },
   ];
 
@@ -131,9 +158,33 @@ function UserNavbar() {
         <Menu items={items_2} mode="horizontal" style={styleNav} />
       </div>
 
-      {open &&
+      {open.detail &&
         createPortal(
-          <Cart items={[]} onOpen={open} onCloseCart={handleCloseCart} />,
+          <Cart
+            items={[]}
+            onOpen={open.detail}
+            onCloseCart={handleCloseCart}
+          />,
+          document.body
+        )}
+
+      {open.register &&
+        createPortal(
+          <CustomerRegister
+            open={open.register}
+            onCloseModal={handleCloseRegister}
+            onChangeMode={handleSwitchToLogin}
+          />,
+          document.body
+        )}
+
+      {open.login &&
+        createPortal(
+          <CustomerLogin
+            open={open.login}
+            onCloseModal={handleCloseLogin}
+            onChangeMode={handleSwitchToRegister}
+          />,
           document.body
         )}
     </>
