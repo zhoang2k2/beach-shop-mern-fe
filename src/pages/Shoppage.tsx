@@ -1,45 +1,39 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  Empty,
-  Flex,
-  Input,
-  Layout,
-  Menu,
-  Pagination,
-  Row,
-} from "antd";
+import { Button, Flex, Input, Layout, Menu, Pagination, Row } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { RedoOutlined } from "@ant-design/icons";
 import Search, { type SearchProps } from "antd/es/input/Search";
 import { useEffect, useState } from "react";
 import type { CSS, InputEvent } from "../types/types";
-import type { ProductType } from "../redux/reducers/productSlice";
+import {
+  fetchProducts,
+  selectProductState,
+  type ProductType,
+} from "../redux/reducers/productSlice";
 import { useStickyBox } from "react-sticky-box";
-import type { CategoryType } from "../redux/reducers/categorySlice";
-import type { SizeType } from "../redux/reducers/sizeSlice";
 import TextArea from "antd/es/input/TextArea";
-import { createPortal } from "react-dom";
-import DetailModal from "../components/user/modal/DetailModal";
 
-const { Meta } = Card;
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchCategory,
+  selectCategoryState,
+} from "../redux/reducers/categorySlice";
+import { fetchSizes, selectSizeState } from "../redux/reducers/sizeSlice";
+import ProductCard from "../components/user/productCard/ProductCard";
+import Countdown, { type CountdownProps } from "antd/es/statistic/Countdown";
 
-type ShoppageProps = {
-  products: ProductType[];
-  categories: CategoryType[];
-  sizes: SizeType[];
-};
-
-function Shoppage({ ...props }: ShoppageProps) {
-  const [loading, setLoading] = useState(true);
+function Shoppage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
+  const { products } = useSelector(selectProductState);
+  const { categories } = useSelector(selectCategoryState);
+  const { sizes } = useSelector(selectSizeState);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
+    dispatch(fetchProducts());
+    dispatch(fetchCategory());
+    dispatch(fetchSizes());
+  }, [dispatch]);
 
   const siderStyle: CSS = {
     textAlign: "center",
@@ -59,7 +53,7 @@ function Shoppage({ ...props }: ShoppageProps) {
     if (inputVal !== "") {
       setSearch(true);
       setTimeout(() => {
-        const newArray = props.products.filter(
+        const newArray = products.filter(
           (list) =>
             list.brand
               .toLocaleLowerCase()
@@ -80,7 +74,7 @@ function Shoppage({ ...props }: ShoppageProps) {
     setInputVal("");
     setSelectedCategories([]);
     setSelectedSizes([]);
-    setSearchVals(props.products);
+    setSearchVals(products);
   };
 
   const StickyBox = useStickyBox({ offsetTop: 100, offsetBottom: 20 });
@@ -89,17 +83,17 @@ function Shoppage({ ...props }: ShoppageProps) {
     {
       key: "filter1",
       label: "Categories",
-      children: props.categories.map((item) => {
+      children: categories.map((category) => {
         return {
-          key: item.category_id,
-          label: item.name,
+          key: category.category_id,
+          label: category.name,
         };
       }),
     },
     {
       key: "filter2",
       label: "Product Sizes",
-      children: props.sizes.map((item) => {
+      children: sizes.map((item) => {
         return {
           key: item.name,
           label: item.name,
@@ -111,13 +105,13 @@ function Shoppage({ ...props }: ShoppageProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 
-  const sizesArray = props.sizes.map((item) => item.name);
+  const sizesArray = sizes && sizes.map((item) => item.name);
 
   const handleSelect = ({ key }: { key: string }) => {
     if (sizesArray.includes(key)) {
       setSelectedSizes((prevSizes) => {
         const newSizes = [...prevSizes, key];
-        const updateRenderItems = props.products.filter(
+        const updateRenderItems = products.filter(
           (item) =>
             (selectedCategories.length === 0 ||
               selectedCategories.includes(item.category_id)) &&
@@ -129,7 +123,7 @@ function Shoppage({ ...props }: ShoppageProps) {
     } else {
       setSelectedCategories((prevCategories) => {
         const newKeys = [...prevCategories, key];
-        const updateRenderItems = props.products.filter(
+        const updateRenderItems = products.filter(
           (item) =>
             (selectedSizes.length === 0 ||
               selectedSizes.every((size) => item.sizes.includes(size))) &&
@@ -145,7 +139,7 @@ function Shoppage({ ...props }: ShoppageProps) {
     if (sizesArray.includes(key)) {
       setSelectedSizes((prevSizes) => {
         const newSizes = prevSizes.filter((k) => k !== key);
-        const updateRenderItems = props.products.filter(
+        const updateRenderItems = products.filter(
           (item) =>
             (selectedCategories.length === 0 ||
               selectedCategories.includes(item.category_id)) &&
@@ -157,7 +151,7 @@ function Shoppage({ ...props }: ShoppageProps) {
     } else {
       setSelectedCategories((prevCategories) => {
         const newCategories = prevCategories.filter((k) => k !== key);
-        const updateRenderItems = props.products.filter(
+        const updateRenderItems = products.filter(
           (item) =>
             (selectedSizes.length === 0 ||
               selectedSizes.every((size) => item.sizes.includes(size))) &&
@@ -171,9 +165,9 @@ function Shoppage({ ...props }: ShoppageProps) {
 
   useEffect(() => {
     if (selectedCategories.length === 0 && selectedSizes.length === 0) {
-      setSearchVals(props.products);
+      setSearchVals(products);
     }
-  }, [props.products, selectedCategories.length, selectedSizes.length]);
+  }, [products, selectedCategories.length, selectedSizes.length]);
 
   // PAGINATION
   const [page, setPage] = useState(1);
@@ -201,73 +195,18 @@ function Shoppage({ ...props }: ShoppageProps) {
     console.log("Change:", e.target.value);
   };
 
-  const [open, setOpen] = useState(false);
-  const showModal = (item: ProductType) => {
-    setSelectedItem(item);
-    setOpen(true);
+  const deadline = Date.now() + 1000 * 60 * 60 * 24 * 30 * 4;
+  const onFinish: CountdownProps["onFinish"] = () => {
+    console.log("finished!");
   };
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
-
-  const [selectedItem, setSelectedItem] = useState<ProductType>();
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const handleSelectImage = (image: string) => {
-    setSelectedImage(image);
-  };
-
-  // HANDLING COLOR
-  const [selectedColor, setSelectedColor] = useState<{ [key: string]: string }>(
-    {}
-  );
-  const handleRemoveColor = (itemId: string) => {
-    setSelectedColor((prevColors) => {
-      const newColor = { ...prevColors };
-      delete newColor[itemId];
-      return newColor;
-    });
-  };
-  const handleAddColor = (itemId: string, color: string) => {
-    setSelectedColor((prevColors) => ({
-      ...prevColors,
-      [itemId]: color,
-    }));
-  };
-
-  // HANDLING SIZE
-  const [selectedSize, setSelectedSize] = useState<{ [key: string]: string }>(
-    {}
-  );
-  const handleRemoveSize = (itemId: string) => {
-    setSelectedSize((prevSize) => {
-      const newSize = { ...prevSize };
-      delete newSize[itemId];
-      return newSize;
-    });
-  };
-  const handleAddSize = (itemId: string, size: string) => {
-    setSelectedSize((prevSize) => ({
-      ...prevSize,
-      [itemId]: size,
-    }));
-  };
-
-  useEffect(() => {
-    if (selectedItem) {
-      setSelectedImage(selectedItem?.images[0]);
-      setSelectedColor((prevSelectedColors) => ({
-        ...prevSelectedColors,
-        [selectedItem._id]: selectedItem.colors[0],
-      }));
-      setSelectedSize((prevSelectedSize) => ({
-        ...prevSelectedSize,
-        [selectedItem._id]: selectedItem.sizes[0],
-      }));
-    }
-  }, [selectedItem]);
 
   return (
     <>
+      <Row style={{marginTop: 200}}>
+        DUE TO OCTOBER
+        <Countdown title="Countdown" value={deadline} onFinish={onFinish} />
+      </Row>
+
       <Flex>
         <div className="product-container">
           <h2>LET'S SHOPPING</h2>
@@ -312,26 +251,7 @@ function Shoppage({ ...props }: ShoppageProps) {
 
             <Content>
               <div className="product-list">
-                {currentItems.length > 0 ?
-                  currentItems.map((item) => {
-                    return (
-                      <Card
-                        style={{ width: 350, marginTop: 16 }}
-                        loading={loading}
-                        key={item._id}
-                        hoverable
-                        onClick={() => showModal(item)}
-                      >
-                        <Meta
-                          avatar={
-                            <Avatar src={item.images[0]} shape="square" />
-                          }
-                          title={`${item.brand} - ` + item.description}
-                          description={"$" + item.price + ` (${item.sizes})`}
-                        />
-                      </Card>
-                    );
-                  }) :  <Empty />}
+                <ProductCard mode="shoppage" renderItems={currentItems} />
               </div>
 
               <Pagination
@@ -373,38 +293,6 @@ function Shoppage({ ...props }: ShoppageProps) {
           </div>
         </Flex>
       </Row>
-
-      {createPortal(
-        <DetailModal
-          selectedItem={
-            selectedItem ?? {
-              _id: "",
-              name: "",
-              description: "",
-              price: 0,
-              category_id: "",
-              brand: "",
-              stock: 0,
-              sizes: [""],
-              colors: [""],
-              images: [""],
-              rating: 0,
-              reviews: [""],
-            }
-          }
-          selectedImage={selectedImage}
-          selectedColor={selectedColor}
-          selectedSize={selectedSize}
-          open={open}
-          onCloseModal={handleCloseModal}
-          handleSelectImage={handleSelectImage}
-          handleRemoveColor={handleRemoveColor}
-          handleAddColor={handleAddColor}
-          handleRemoveSize={handleRemoveSize}
-          handleAddSize={handleAddSize}
-        />,
-        document.body
-      )}
     </>
   );
 }

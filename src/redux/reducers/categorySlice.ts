@@ -50,4 +50,5 @@ const categorySlice = createSlice({
 });
 
 export default categorySlice;
-export const selectCategoryState = (state: RootState) => state.categories;
+export const selectCategoryState = (state: RootState): CategoryState =>
+  state.categories;

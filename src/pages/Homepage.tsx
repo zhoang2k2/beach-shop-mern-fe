@@ -1,23 +1,25 @@
-import { Avatar, Card, Carousel, Col, Empty, Flex, Input, Row } from "antd";
-import type { ProductType } from "../redux/reducers/productSlice";
-import { useEffect, useState } from "react";
+import { Card, Carousel, Col, Flex, Input, Row } from "antd";
+import {
+  fetchProducts,
+  selectProductState,
+} from "../redux/reducers/productSlice";
 import type { CSS } from "../types/types";
-import type { CategoryType } from "../redux/reducers/categorySlice";
-import type { SizeType } from "../redux/reducers/sizeSlice";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
 import { RightOutlined } from "@ant-design/icons";
-import { createPortal } from "react-dom";
-import DetailModal from "../components/user/modal/DetailModal";
 import TextArea from "antd/es/input/TextArea";
+import ProductCard from "../components/user/productCard/ProductCard";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
-type HomepageProps = {
-  products: ProductType[];
-  categories: CategoryType[];
-  sizes: SizeType[];
-};
+function Homepage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
+  const { products } = useSelector(selectProductState);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
-function Homepage({ ...props }: HomepageProps) {
   const contentStyle: CSS = {
     margin: "auto",
     height: "600px",
@@ -34,84 +36,12 @@ function Homepage({ ...props }: HomepageProps) {
     objectFit: "cover",
   };
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const topItems = props.products.filter((item) => item.rating >= 4.5);
-  const renderTopItems = topItems.slice(0, 5);
-
-  const cheapItems = props.products.filter((item) => item.price <= 10);
-  const renderCheapItems = cheapItems.slice(0, 5);
-
-  const [open, setOpen] = useState(false);
-  const showModal = (item: ProductType) => {
-    setSelectedItem(item);
-    setOpen(true);
-  };
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
-
-  const [selectedItem, setSelectedItem] = useState<ProductType>();
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const handleSelectImage = (image: string) => {
-    setSelectedImage(image);
-  };
-
-  // HANDLING COLOR
-  const [selectedColor, setSelectedColor] = useState<{ [key: string]: string }>(
-    {}
-  );
-  const handleRemoveColor = (itemId: string) => {
-    setSelectedColor((prevColors) => {
-      const newColor = { ...prevColors };
-      delete newColor[itemId];
-      return newColor;
-    });
-  };
-  const handleAddColor = (itemId: string, color: string) => {
-    setSelectedColor((prevColors) => ({
-      ...prevColors,
-      [itemId]: color,
-    }));
-  };
-
-  // HANDLING SIZE
-  const [selectedSize, setSelectedSize] = useState<{ [key: string]: string }>(
-    {}
-  );
-  const handleRemoveSize = (itemId: string) => {
-    setSelectedSize((prevSize) => {
-      const newSize = { ...prevSize };
-      delete newSize[itemId];
-      return newSize;
-    });
-  };
-  const handleAddSize = (itemId: string, size: string) => {
-    setSelectedSize((prevSize) => ({
-      ...prevSize,
-      [itemId]: size,
-    }));
-  };
-
-  useEffect(() => {
-    if (selectedItem) {
-      setSelectedImage(selectedItem?.images[0]);
-      setSelectedColor((prevSelectedColors) => ({
-        ...prevSelectedColors,
-        [selectedItem._id]: selectedItem.colors[0],
-      }));
-      setSelectedSize((prevSelectedSize) => ({
-        ...prevSelectedSize,
-        [selectedItem._id]: selectedItem.sizes[0],
-      }));
-    }
-  }, [selectedItem]);
+  const renderTopItems = products
+    .filter((item) => item.rating >= 4.5)
+    .slice(0, 5);
+  const renderCheapItems = products
+    .filter((item) => item.price <= 10)
+    .slice(0, 5);
 
   const logos = [
     {
@@ -233,6 +163,7 @@ function Homepage({ ...props }: HomepageProps) {
       </Row>
 
       <Flex vertical>
+        {/* BEST SELLER PRODUCT RENDER */}
         <Row>
           <div className="products-preview">
             <div className="products-preview-title">
@@ -257,42 +188,14 @@ function Homepage({ ...props }: HomepageProps) {
             <div className="products-preview-list">
               <Row>
                 <Flex justify="center" style={{ width: "100%" }} gap={20}>
-                  {renderTopItems.length > 0 ? (
-                    renderTopItems.map((item) => {
-                      return (
-                        <Col className="gutter-row" span={4} key={item._id}>
-                          <Card
-                            style={{ width: "100%" }}
-                            loading={loading}
-                            hoverable
-                            onClick={() => showModal(item)}
-                          >
-                            <Meta
-                              avatar={
-                                <Avatar src={item.images[0]} shape="square" />
-                              }
-                              title={item.description}
-                              description={
-                                <div className="product-content">
-                                  <span>{item.brand}</span>
-                                  <p>${item.price}</p>
-                                  <p>{item.rating} rated recently</p>
-                                </div>
-                              }
-                            />
-                          </Card>
-                        </Col>
-                      );
-                    })
-                  ) : (
-                    <Empty />
-                  )}
+                  <ProductCard mode="homepage" renderItems={renderTopItems} />
                 </Flex>
               </Row>
             </div>
           </div>
         </Row>
 
+        {/* CHEAP PRODUCT RENDER */}
         <Row>
           <div className="products-preview">
             <div className="products-preview-title">
@@ -317,36 +220,7 @@ function Homepage({ ...props }: HomepageProps) {
             <div className="products-preview-list">
               <Row>
                 <Flex justify="center" style={{ width: "100%" }} gap={20}>
-                  {renderCheapItems.length > 0 ? (
-                    renderCheapItems.map((item) => {
-                      return (
-                        <Col className="gutter-row" span={4} key={item._id}>
-                          <Card
-                            style={{ width: "100%" }}
-                            loading={loading}
-                            hoverable
-                            onClick={() => showModal(item)}
-                          >
-                            <Meta
-                              avatar={
-                                <Avatar src={item.images[0]} shape="square" />
-                              }
-                              title={item.description}
-                              description={
-                                <div className="product-content">
-                                  <span>{item.brand}</span>
-                                  <p>${item.price}</p>
-                                  <p>{item.rating} rated recently</p>
-                                </div>
-                              }
-                            />
-                          </Card>
-                        </Col>
-                      );
-                    })
-                  ) : (
-                    <Empty />
-                  )}
+                  <ProductCard mode="homepage" renderItems={renderCheapItems} />
                 </Flex>
               </Row>
             </div>
@@ -424,38 +298,6 @@ function Homepage({ ...props }: HomepageProps) {
           </div>
         </Flex>
       </Row>
-
-      {createPortal(
-        <DetailModal
-          selectedItem={
-            selectedItem ?? {
-              _id: "",
-              name: "",
-              description: "",
-              price: 0,
-              category_id: "",
-              brand: "",
-              stock: 0,
-              sizes: [""],
-              colors: [""],
-              images: [""],
-              rating: 0,
-              reviews: [""],
-            }
-          }
-          selectedImage={selectedImage}
-          selectedColor={selectedColor}
-          selectedSize={selectedSize}
-          open={open}
-          onCloseModal={handleCloseModal}
-          handleSelectImage={handleSelectImage}
-          handleRemoveColor={handleRemoveColor}
-          handleAddColor={handleAddColor}
-          handleRemoveSize={handleRemoveSize}
-          handleAddSize={handleAddSize}
-        />,
-        document.body
-      )}
     </>
   );
 }

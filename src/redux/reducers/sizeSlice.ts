@@ -49,4 +49,4 @@ const sizeSlice = createSlice({
 });
 
 export default sizeSlice;
-export const selectSizeState = (state: RootState) => state.sizes;
+export const selectSizeState = (state: RootState): SizeState => state.sizes;

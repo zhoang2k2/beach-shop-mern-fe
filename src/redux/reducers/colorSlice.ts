@@ -28,25 +28,25 @@ export const fetchColors = createAsyncThunk("colors/fetch", async () => {
 });
 
 const colorSlice = createSlice({
-    name: "color",
-    initialState,
-    reducers: {},
-    extraReducers:  (builder) => {
-        builder
-          .addCase(fetchColors.fulfilled, (state, action) => {
-            if (action.payload) {
-              state.colors = action.payload;
-              state.status === "SUCCESS";
-            }
-          })
-          .addCase(fetchColors.pending, (state) => {
-            state.status = "LOADING";
-          })
-          .addCase(fetchColors.rejected, (state) => {
-            state.status = "FAIL";
-          });
-      },
-})
+  name: "color",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchColors.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.colors = action.payload;
+          state.status === "SUCCESS";
+        }
+      })
+      .addCase(fetchColors.pending, (state) => {
+        state.status = "LOADING";
+      })
+      .addCase(fetchColors.rejected, (state) => {
+        state.status = "FAIL";
+      });
+  },
+});
 
-export default colorSlice
-export const selectColorState = (state: RootState) => state.colors
+export default colorSlice;
+export const selectColorState = (state: RootState): ColorState => state.colors;

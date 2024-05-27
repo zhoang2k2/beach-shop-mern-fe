@@ -6,17 +6,22 @@ import {
 } from "@ant-design/icons";
 import { Button, Menu } from "antd";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
+import Cart from "../cart/Cart";
 
 function UserNavbar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [selectedKey, setSelectedKey] = useState("home");
 
-  // const [open, setOpen] = useState(false);
-  // const showDrawer = () => {
-  //   setOpen(true);
-  // };
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const handleCloseCart = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     let key = "home";
@@ -59,7 +64,7 @@ function UserNavbar() {
   const items_2 = [
     {
       key: "cart",
-      label: <ShoppingCartOutlined />,
+      label: <ShoppingCartOutlined onClick={showDrawer} />,
     },
     {
       key: "user",
@@ -125,6 +130,12 @@ function UserNavbar() {
 
         <Menu items={items_2} mode="horizontal" style={styleNav} />
       </div>
+
+      {open &&
+        createPortal(
+          <Cart items={[]} onOpen={open} onCloseCart={handleCloseCart} />,
+          document.body
+        )}
     </>
   );
 }
