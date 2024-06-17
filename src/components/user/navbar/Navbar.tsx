@@ -1,10 +1,11 @@
 import {
+  BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Menu } from "antd";
+import { Button, Flex, Menu } from "antd";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
@@ -56,6 +57,12 @@ function UserNavbar() {
       case "/shop":
         key = "shop";
         break;
+      case "/shop/cheap-price":
+        key = "";
+        break;
+      case "/shop/best-seller":
+        key = "";
+        break;
       case "/about":
         key = "about";
         break;
@@ -69,7 +76,7 @@ function UserNavbar() {
     setSelectedKey(key);
   }, [currentPath]);
 
-  const items_1 = [
+  const navItems = [
     {
       key: "home",
       label: <Link to={"/"}>Home</Link>,
@@ -88,14 +95,35 @@ function UserNavbar() {
     },
   ];
 
-  const items_2 = [
+  const mobileNavItems = [
     {
-      key: "cart",
-      label: <ShoppingCartOutlined onClick={showDetailModal} />,
+      key: "home",
+      label: <Link to={"/"}>Home</Link>,
     },
     {
-      key: "user",
-      label: <UserOutlined onClick={showCustomerLogin} />,
+      key: "about",
+      label: <Link to={"/about"}>About</Link>,
+    },
+    {
+      key: "order",
+      label: <Link to={"/order"}>Order</Link>,
+    },
+    {
+      key: "shop",
+      label: <Link to={"/shop"}>Shop</Link>,
+    },
+    {
+      key: "buttons",
+      label: (
+        <>
+          <Button>
+            <ShoppingCartOutlined onClick={showDetailModal} />
+          </Button>
+          <Button>
+            <UserOutlined onClick={showCustomerLogin} />
+          </Button>
+        </>
+      ),
     },
   ];
 
@@ -120,42 +148,70 @@ function UserNavbar() {
           alignItems: "center",
         }}
       >
-        <div style={{ width: 125 }} className="moblie-navbar-items">
-          <Button
-            className="nav-btn"
-            onClick={toggleCollapsed}
-            style={{ marginBottom: 16 }}
-          >
-            {collapsed ? (
-              <MenuUnfoldOutlined className="nav-btn-1" />
-            ) : (
-              <MenuFoldOutlined />
-            )}
-          </Button>
-          {collapsed ? (
-            ""
-          ) : (
-            <Menu
-              defaultSelectedKeys={["home"]}
-              mode="inline"
-              theme="light"
-              items={items_1}
-            />
-          )}
+        <div className="moblie-navbar">
+          <Flex align="center" justify="space-between">
+            <div className="logo">LOGO</div>
+
+            <div className="mobile-navbar-actions">
+              <Flex align="center" gap={5}>
+                <Button>
+                  <BellOutlined />
+                </Button>
+                <Button
+                  className="extra-btn"
+                  onClick={toggleCollapsed}
+                  style={{ marginBottom: 16 }}
+                >
+                  {collapsed ? (
+                    <MenuUnfoldOutlined className="nav-btn-1" />
+                  ) : (
+                    <MenuFoldOutlined />
+                  )}
+                </Button>
+                {collapsed ? (
+                  ""
+                ) : (
+                  <>
+                    <Menu
+                      defaultSelectedKeys={["home"]}
+                      mode="inline"
+                      theme="light"
+                      items={mobileNavItems}
+                    />
+                  </>
+                )}
+              </Flex>
+            </div>
+          </Flex>
         </div>
 
-        <div className="logo">LOGO</div>
+        <div className="navbar-items">
+          <Flex justify="space-between" align="center">
+            <div className="logo">LOGO</div>
 
-        <Menu
-          items={items_1}
-          mode="horizontal"
-          style={styleNav}
-          selectedKeys={[selectedKey]}
-          className="desktop-navbar-items"
-          disabledOverflow
-        />
+            <Menu
+              items={navItems}
+              mode="horizontal"
+              style={styleNav}
+              selectedKeys={[selectedKey]}
+              disabledOverflow
+            />
 
-        <Menu items={items_2} mode="horizontal" style={styleNav} />
+            <div className="navbar-action">
+              <Flex gap={7.5}>
+                <Button>
+                  <BellOutlined />
+                </Button>
+                <Button>
+                  <ShoppingCartOutlined onClick={showDetailModal} />
+                </Button>
+                <Button>
+                  <UserOutlined onClick={showCustomerLogin} />
+                </Button>
+              </Flex>
+            </div>
+          </Flex>
+        </div>
       </div>
 
       {open.detail &&

@@ -89,6 +89,7 @@ function ProductCard({ renderItems, mode }: ProductCardProps) {
         renderItems.map((item) =>
           mode === "shoppage" ? (
             <Card
+              className="product-card"
               style={{ width: 350, marginTop: 16 }}
               loading={loading}
               key={item._id}
@@ -102,8 +103,9 @@ function ProductCard({ renderItems, mode }: ProductCardProps) {
               />
             </Card>
           ) : (
-            <Col className="gutter-row" span={4} key={item._id}>
+            <Col className="gutter-row" span={1} key={item._id}>
               <Card
+                className="product-card"
                 style={{ width: "100%" }}
                 loading={loading}
                 hoverable

@@ -7,5 +7,11 @@
 @import "./components/navbar/navbar";
 @import "./components/homepage/homepage";
 @import "./components/modal/modal";
+@import "./components/userForm/userForm";
 @import "./components/card/ProductCard";
 @import "./components/footer/footer";
+
+html,
+body {
+  overflow-x: hidden;
+}

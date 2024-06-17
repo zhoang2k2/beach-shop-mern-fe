@@ -36,19 +36,18 @@ function Shoppage() {
     dispatch(fetchSizes());
   }, [dispatch]);
 
-
   const location = useLocation();
   const currentPath = location.pathname;
   const [itemsByMode, setItemsByMode] = useState<ProductType[]>([]);
 
   useEffect(() => {
-    let items = [...products];
+    let items = [];
     switch (currentPath) {
       case "/shop/cheap-price":
-        items = products.filter((item) => item.rating >= 4.5);
+        items = products.filter((item) => item.price < 10);
         break;
       case "/shop/best-seller":
-        items = products.filter((item) => item.rating < 10);
+        items = products.filter((item) => item.rating >= 4.5);
         break;
       default:
         items = [...products];
@@ -56,18 +55,6 @@ function Shoppage() {
     }
     setItemsByMode(items);
   }, [currentPath, products]);
-
-  // useEffect(() => {
-  //   if (mode === "best") {
-  //     const newProducts = );
-  //     return (setItemsByMode(newProducts));
-  //   } else if (mode === "cheap") {
-  //     const newProducts = products.filter((item) => item.price <= 10);
-  //     return setItemsByMode(newProducts);
-  //   } else {
-  //     return setItemsByMode(products);
-  //   }
-  // }, [mode, products]);
 
   const siderStyle: CSS = {
     textAlign: "center",
@@ -108,7 +95,7 @@ function Shoppage() {
     setInputVal("");
     setSelectedCategories([]);
     setSelectedSizes([]);
-    setSearchVals(products);
+    setSearchVals(itemsByMode);
   };
 
   const StickyBox = useStickyBox({ offsetTop: 100, offsetBottom: 20 });
@@ -145,7 +132,7 @@ function Shoppage() {
     if (sizesArray.includes(key)) {
       setSelectedSizes((prevSizes) => {
         const newSizes = [...prevSizes, key];
-        const updateRenderItems = products.filter(
+        const updateRenderItems = itemsByMode.filter(
           (item) =>
             (selectedCategories.length === 0 ||
               selectedCategories.includes(item.category_id)) &&
@@ -157,7 +144,7 @@ function Shoppage() {
     } else {
       setSelectedCategories((prevCategories) => {
         const newKeys = [...prevCategories, key];
-        const updateRenderItems = products.filter(
+        const updateRenderItems = itemsByMode.filter(
           (item) =>
             (selectedSizes.length === 0 ||
               selectedSizes.every((size) => item.sizes.includes(size))) &&
@@ -173,7 +160,7 @@ function Shoppage() {
     if (sizesArray.includes(key)) {
       setSelectedSizes((prevSizes) => {
         const newSizes = prevSizes.filter((k) => k !== key);
-        const updateRenderItems = products.filter(
+        const updateRenderItems = itemsByMode.filter(
           (item) =>
             (selectedCategories.length === 0 ||
               selectedCategories.includes(item.category_id)) &&
@@ -185,7 +172,7 @@ function Shoppage() {
     } else {
       setSelectedCategories((prevCategories) => {
         const newCategories = prevCategories.filter((k) => k !== key);
-        const updateRenderItems = products.filter(
+        const updateRenderItems = itemsByMode.filter(
           (item) =>
             (selectedSizes.length === 0 ||
               selectedSizes.every((size) => item.sizes.includes(size))) &&
@@ -199,9 +186,9 @@ function Shoppage() {
 
   useEffect(() => {
     if (selectedCategories.length === 0 && selectedSizes.length === 0) {
-      setSearchVals(products);
+      setSearchVals(itemsByMode);
     }
-  }, [products, selectedCategories.length, selectedSizes.length]);
+  }, [itemsByMode, selectedCategories.length, selectedSizes.length]);
 
   // PAGINATION
   const [page, setPage] = useState(1);

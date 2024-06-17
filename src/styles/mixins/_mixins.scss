@@ -1,6 +1,7 @@
 // RESPONSIVE
 @mixin moblie {
-  @media (max-width: 738px) {
+  @media (max-width: 480px) {
     @content;
   }
 }
+

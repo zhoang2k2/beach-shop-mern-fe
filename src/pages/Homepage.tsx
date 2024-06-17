@@ -2,15 +2,16 @@ import { Card, Carousel, Col, Flex, Input, Row } from "antd";
 import {
   fetchProducts,
   selectProductState,
+  type ProductType,
 } from "../redux/reducers/productSlice";
 import type { CSS } from "../types/types";
 import Meta from "antd/es/card/Meta";
 import { Link } from "react-router-dom";
-import { RightOutlined } from "@ant-design/icons";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import ProductCard from "../components/user/productCard/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect} from "react";
+import { useEffect, useState } from "react";
 
 function Homepage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,12 +44,120 @@ function Homepage() {
     objectFit: "cover",
   };
 
-  const renderTopItems = products
-    .filter((item) => item.rating >= 4.5)
-    .slice(0, 5);
-  const renderCheapItems = products
-    .filter((item) => item.price <= 10)
-    .slice(0, 5);
+  const [renderTopItems, setRenderTopItems] = useState<Array<ProductType>>([]);
+  const [renderCheapItems, setRenderCheapItems] = useState<Array<ProductType>>(
+    []
+  );
+  const [inititalItems, setInititalItems] = useState<{
+    [key: string]: ProductType[];
+  }>({
+    top: [],
+    cheap: [],
+  });
+  const [disableBtn, setDisableBtn] = useState({
+    top: {
+      next: false,
+      prev: false,
+    },
+    cheap: {
+      next: false,
+      prev: false,
+    },
+  });
+  const [firstIndex, setFirstIndex] = useState<{ [key: string]: number }>({
+    top: 0,
+    cheap: 0,
+  });
+  useEffect(() => {
+    setInititalItems({
+      top: products.filter((item) => item.rating > 4.5).slice(0, 8),
+      cheap: products.filter((item) => item.price < 10).slice(0, 8),
+    });
+  }, [products]);
+  useEffect(() => {
+    inititalItems.top &&
+      setRenderTopItems(
+        inititalItems.top.slice(firstIndex.top, firstIndex.top + 5)
+      );
+  }, [firstIndex.top, inititalItems.top]);
+  useEffect(() => {
+    inititalItems.cheap &&
+      setRenderCheapItems(
+        inititalItems.cheap.slice(firstIndex.cheap, firstIndex.cheap + 5)
+      );
+  }, [firstIndex.cheap, inititalItems.cheap]);
+
+  const handleNext = (mode: string) => {
+    if (mode === "top") {
+      if (firstIndex.top + 5 < inititalItems.top.length) {
+        setFirstIndex((prevState) => ({
+          ...prevState,
+          top: prevState.top + 1,
+        }));
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          top: { next: false, prev: false },
+        }));
+      } else {
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          top: { next: true, prev: false },
+        }));
+      }
+    } else {
+      if (firstIndex.cheap + 5 < inititalItems.cheap.length) {
+        setFirstIndex((prevState) => ({
+          ...prevState,
+          cheap: prevState.cheap + 1,
+        }));
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          cheap: { next: false, prev: false },
+        }));
+      } else {
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          cheap: { next: true, prev: false },
+        }));
+      }
+    }
+  };
+
+  const handlePrev = (mode: string) => {
+    if (mode === "top") {
+      if (firstIndex.top !== 0) {
+        setFirstIndex((prevState) => ({
+          ...prevState,
+          top: prevState.top - 1,
+        }));
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          top: { next: false, prev: false },
+        }));
+      } else {
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          top: { next: false, prev: true },
+        }));
+      }
+    } else {
+      if (firstIndex.cheap !== 0) {
+        setFirstIndex((prevState) => ({
+          ...prevState,
+          cheap: prevState.cheap - 1,
+        }));
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          cheap: { next: false, prev: false },
+        }));
+      } else {
+        setDisableBtn((prevState) => ({
+          ...prevState,
+          cheap: { next: false, prev: true },
+        }));
+      }
+    }
+  };
 
   const logos = [
     {
@@ -111,8 +220,8 @@ function Homepage() {
 
   return (
     <>
-      <Carousel autoplay>
-        <div>
+      <Carousel className="carousel-container" autoplay>
+        <div className="carousel-content">
           <h3 style={contentStyle}>
             <img src="https://i.imgur.com/DSTBath.jpeg" style={imageStyle} />
           </h3>
@@ -169,35 +278,46 @@ function Homepage() {
         </Flex>
       </Row>
 
-      <Flex vertical>
+      <Flex className="products-container" gap={50} vertical>
         {/* BEST SELLER PRODUCT RENDER */}
         <Row>
           <div className="products-preview">
             <div className="products-preview-title">
-              <Row>
-                <Flex
-                  align="center"
-                  justify="space-between"
-                  style={{ width: "100%" }}
-                >
-                  <Col>
-                    <h2>our best seller</h2>
-                  </Col>
-                  <Col>
-                    <Link to="/shop/best-seller" >
-                      See more <RightOutlined />
-                    </Link>
-                  </Col>
-                </Flex>
-              </Row>
+              <Flex align="center" justify="space-between">
+                <Col>
+                  <h2>our best seller</h2>
+                </Col>
+                <Col>
+                  <Link to="/shop/best-seller">
+                    See more <RightOutlined />
+                  </Link>
+                </Col>
+              </Flex>
             </div>
 
             <div className="products-preview-list">
-              <Row>
-                <Flex justify="center" style={{ width: "100%" }} gap={10}>
+              <Row justify="center">
+                <Flex justify="center" gap={10}>
                   <ProductCard mode="homepage" renderItems={renderTopItems} />
                 </Flex>
               </Row>
+
+              <div className="products-preview-actions">
+                <Flex justify="space-between">
+                  <button
+                    className={disableBtn.top.prev ? "disable" : ""}
+                    onClick={() => handlePrev("top")}
+                  >
+                    <LeftOutlined />
+                  </button>
+                  <button
+                    className={disableBtn.top.next ? "disable" : ""}
+                    onClick={() => handleNext("top")}
+                  >
+                    <RightOutlined />
+                  </button>
+                </Flex>
+              </div>
             </div>
           </div>
         </Row>
@@ -206,30 +326,41 @@ function Homepage() {
         <Row>
           <div className="products-preview">
             <div className="products-preview-title">
-              <Row>
-                <Flex
-                  align="center"
-                  justify="space-between"
-                  style={{ width: "100%" }}
-                >
-                  <Col>
-                    <h2>Under $10 items</h2>
-                  </Col>
-                  <Col>
-                    <Link to="/shop/cheap-price">
-                      See more <RightOutlined />
-                    </Link>
-                  </Col>
-                </Flex>
-              </Row>
+              <Flex align="center" justify="space-between">
+                <Col>
+                  <h2>Under 10$</h2>
+                </Col>
+                <Col>
+                  <Link to="/shop/best-seller">
+                    See more <RightOutlined />
+                  </Link>
+                </Col>
+              </Flex>
             </div>
 
             <div className="products-preview-list">
-              <Row>
-                <Flex justify="center" style={{ width: "100%" }} gap={10}>
+              <Row justify="center">
+                <Flex justify="center" gap={10}>
                   <ProductCard mode="homepage" renderItems={renderCheapItems} />
                 </Flex>
               </Row>
+
+              <div className="products-preview-actions">
+                <Flex justify="space-between">
+                  <button
+                    className={disableBtn.cheap.prev ? "disable" : ""}
+                    onClick={() => handlePrev("cheap")}
+                  >
+                    <LeftOutlined />
+                  </button>
+                  <button
+                    className={disableBtn.cheap.next ? "disable" : ""}
+                    onClick={() => handleNext("cheap")}
+                  >
+                    <RightOutlined />
+                  </button>
+                </Flex>
+              </div>
             </div>
           </div>
         </Row>
@@ -255,7 +386,7 @@ function Homepage() {
       </div>
 
       <Row className="banner">
-        <Col span={14}>
+        <Col>
           <img src="https://i.imgur.com/OemDj2E.jpg" alt="1" />
           <div className="banner-content">
             <span>hello customers!!</span>
@@ -273,7 +404,7 @@ function Homepage() {
             </Link>
           </div>
         </Col>
-        <Col span={10}>
+        <Col>
           <Flex gap={10} vertical>
             <img src="https://i.imgur.com/1eohAla.jpg" alt="2" />
             <img src="https://i.imgur.com/Zd7kM6v.jpeg" alt="3" />

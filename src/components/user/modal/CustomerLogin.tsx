@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Modal } from "antd";
+import { Button, Checkbox, Flex, Form, Input, Modal } from "antd";
 import type { FormProps } from "antd";
 import { useState } from "react";
 
@@ -65,55 +65,57 @@ function CustomerLogin({
         open={open}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
+        className="customer-form"
       >
+        <h2>LOGIN</h2>
         <Form
           name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item<FieldType>
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: "Please input your username!" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item<FieldType>
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item<FieldType>
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{ offset: 8, span: 16 }}
-          >
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button
-              className="submit-btn"
-              type="primary"
-              loading={loadings[0]}
-              onClick={() => {
-                handleOk(0);
-              }}
+          <Flex gap={10} vertical>
+            <Form.Item<FieldType>
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please input your username!" },
+              ]}
             >
-              login
-            </Button>
-          </Form.Item>
+              <Input />
+            </Form.Item>
 
-          <p onClick={handleChangeMode}>register</p>
+            <Form.Item<FieldType>
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item<FieldType> name="remember" valuePropName="checked">
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
+
+            <p onClick={handleChangeMode}>Don't have any accounts?</p>
+
+            <Form.Item>
+              <Button
+                className="submit-btn"
+                type="primary"
+                htmlType="submit"
+                loading={loadings[0]}
+                onClick={() => {
+                  handleOk(0);
+                }}
+              >
+                login
+              </Button>
+            </Form.Item>
+          </Flex>
         </Form>
       </Modal>
     </>

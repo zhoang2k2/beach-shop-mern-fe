@@ -141,88 +141,86 @@ function DetailModal({
       <Modal
         open={open}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        onCancel={handleCancel} 
       >
         {selectedItem && (
-          <>
-            <Layout style={modalLayoutStyle}>
-              <Header style={modalHeaderStyle}></Header>
-              <Layout>
-                <Sider width="50%" style={modalSiderStyle}>
-                  <Row>
-                    <Col span={6}>
-                      <Flex gap={10} align="center" vertical>
-                        {selectedItem.images.map((image) => {
-                          return (
-                            <img
-                              className={
-                                selectedImage === image ? "selected-img" : ""
-                              }
-                              onClick={() => handleClickImage(image)}
-                              key={image}
-                              src={image}
-                              alt="product img"
-                            />
-                          );
-                        })}
-                      </Flex>
-                    </Col>
-                    <Col span={18}>
-                      <img src={selectedImage} alt="product img" />
-                    </Col>
-                  </Row>
-                </Sider>
-                <Content style={modalContentStyle}>
-                  <Flex gap={20} vertical>
-                    <h2>
-                      {selectedItem.brand} - {selectedItem.name}
-                    </h2>
-                    <h3>${selectedItem.price}</h3>
-                    <p className="product-detail">
-                      {selectedItem.description} Lorem ipsum dolor sit amet,
-                      consectetur adipiscing elit. Morbi imperdiet lobortis
-                      lectus, id fringilla purus convallis et. Donec sodales
-                      turpis justo, vitae tincidunt ante dapibus non. Cras
-                      eleifend ante et magna lobortis tincidunt. In pharetra
-                      consequat ante, sed accumsan risus placerat ut. Morbi
-                      eleifend ultrices lacus tempus rutrum. Vestibulum laoreet
-                      facilisis ex, consequat hendrerit tellus maximus vitae.
-                      Integer justo eros, luctus id bibendum vitae, blandit eget
-                      nunc. Phasellus non libero eu odio ullamcorper congue.
-                      Proin rutrum, enim at vulputate ultrices, orci dolor
-                      fringilla purus, eu convallis sapien quam id eros.
-                      Suspendisse vel elit augue. Vivamus tristique cursus
-                      bibendum. Pellentesque eleifend augue vel erat volutpat, a
-                      elementum elit porttitor.
-                    </p>
-                    <p className="color product-option">
-                      <Flex gap={15}>
-                        <span>color options</span>
-                        {renderColorOpts}
-                      </Flex>
-                    </p>
-                    <p className="size product-option">
-                      <Flex gap={15}>
-                        <span>size options</span>
-                        {renderSizeOpts}
-                      </Flex>
-                    </p>
-                    <Button
-                      className="submit-btn"
-                      type="primary"
-                      loading={loadings[0]}
-                      onClick={() => {
-                        handleOk(0, selectedItem);
-                      }}
-                    >
-                      Add to cart!
-                    </Button>
-                  </Flex>
-                </Content>
-              </Layout>
-              <Footer style={modalFooterStyle}></Footer>
+          <Layout style={modalLayoutStyle}>
+            <Header style={modalHeaderStyle}></Header>
+            <Layout>
+              <Sider width="50%" style={modalSiderStyle}>
+                <Row>
+                  <Col span={6}>
+                    <Flex gap={10} align="center" vertical>
+                      {selectedItem.images.map((image, index) => {
+                        return (
+                          <img
+                            className={
+                              selectedImage === image ? "selected-img" : ""
+                            }
+                            onClick={() => handleClickImage(image)}
+                            key={index}
+                            src={image}
+                            alt="product img"
+                          />
+                        );
+                      })}
+                    </Flex>
+                  </Col>
+                  <Col span={18}>
+                    <img src={selectedImage} alt="product img" />
+                  </Col>
+                </Row>
+              </Sider>
+              <Content style={modalContentStyle}>
+                <Flex gap={20} vertical>
+                  <h2>
+                    {selectedItem.brand} - {selectedItem.name}
+                  </h2>
+                  <h3>${selectedItem.price}</h3>
+                  <p className="product-detail">
+                    {selectedItem.description} Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit. Morbi imperdiet lobortis
+                    lectus, id fringilla purus convallis et. Donec sodales
+                    turpis justo, vitae tincidunt ante dapibus non. Cras
+                    eleifend ante et magna lobortis tincidunt. In pharetra
+                    consequat ante, sed accumsan risus placerat ut. Morbi
+                    eleifend ultrices lacus tempus rutrum. Vestibulum laoreet
+                    facilisis ex, consequat hendrerit tellus maximus vitae.
+                    Integer justo eros, luctus id bibendum vitae, blandit eget
+                    nunc. Phasellus non libero eu odio ullamcorper congue. Proin
+                    rutrum, enim at vulputate ultrices, orci dolor fringilla
+                    purus, eu convallis sapien quam id eros. Suspendisse vel
+                    elit augue. Vivamus tristique cursus bibendum. Pellentesque
+                    eleifend augue vel erat volutpat, a elementum elit
+                    porttitor.
+                  </p>
+                  <p className="color product-option">
+                    <Flex gap={15}>
+                      <span>color options</span>
+                      {renderColorOpts}
+                    </Flex>
+                  </p>
+                  <p className="size product-option">
+                    <Flex gap={15}>
+                      <span>size options</span>
+                      {renderSizeOpts}
+                    </Flex>
+                  </p>
+                  <Button
+                    className="submit-btn"
+                    type="primary"
+                    loading={loadings[0]}
+                    onClick={() => {
+                      handleOk(0, selectedItem);
+                    }}
+                  >
+                    Add to cart!
+                  </Button>
+                </Flex>
+              </Content>
             </Layout>
-          </>
+            <Footer style={modalFooterStyle}></Footer>
+          </Layout>
         )}
       </Modal>
 
