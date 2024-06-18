@@ -121,14 +121,62 @@
         width: 100%;
         position: relative;
 
+        .ant-row {
+          .ant-carousel {
+            width: 100%;
+
+            // .slick-slider {
+            //   .slick-list {
+            //     .slick-track {
+            //       .slick-slide {
+            //         div {
+            //           display: flex;
+            //           margin: auto;
+            //           gap: 10px;
+            //           overflow-x: hidden;
+
+            //           .ant-col {
+            //             width: 100%;
+            //             min-width: 350px;
+
+            //             @include moblie {
+            //               width: 100%;
+            //               min-width: 125px;
+            //             }
+            //           }
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+          }
+        }
+
         .ant-flex {
+          @include moblie {
+            gap: 5px !important;
+            display: grid !important;
+            grid-auto-flow: row;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr;
+          }
           .ant-col {
             width: 100%;
             min-width: 350px;
+
+            @include moblie {
+              width: 100%;
+              min-width: 125px;
+            }
           }
         }
 
         .products-preview-actions {
+          @include moblie {
+            position: absolute;
+            right: 20%;
+            bottom: 7.5%;
+          }
           .ant-flex {
             position: absolute;
             top: 50%;
@@ -138,12 +186,16 @@
 
             button {
               padding: 12.5px 5px;
-              border: 1px solid gray;
-              background-color: transparent;
+              border: 1px solid rgb(100, 100, 100);
+              background-color: rgba(255, 255, 255, 0.2);
               border-radius: 5px;
               transform: scaleY(1.2);
               cursor: pointer;
               transition: 0.25s ease-in-out;
+
+              @include moblie {
+                padding: 10px 5px;
+              }
 
               span {
                 svg {
@@ -202,6 +254,7 @@
     @include moblie {
       width: 100% !important;
       height: 300px;
+      padding: 0 !important;
     }
 
     &:nth-child(1) {
@@ -390,7 +443,13 @@
   }
 
   .ant-flex {
-    flex-direction: column;
+    flex-direction: row;
+
+    @include moblie {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px !important;
+    }
 
     .ant-card {
       padding: 0;
@@ -402,7 +461,7 @@
         height: 275px;
 
         @include moblie {
-          height: 200px;
+          height: 100px;
         }
 
         img {
@@ -415,16 +474,21 @@
         padding: 20px;
 
         @include moblie {
-          padding: 10px;
+          padding: 10px 7.5px;
         }
 
         .ant-card-meta {
           .ant-card-meta-detail {
+            .ant-card-meta-title {
+              @include moblie {
+                font-size: 10px;
+              }
+            }
             .ant-card-meta-description {
               text-align: justify;
 
               @include moblie {
-                font-size: 12px;
+                font-size: 9.5px;
               }
             }
           }
@@ -560,6 +624,11 @@
       width: 150px;
       content: "";
       z-index: 2;
+
+      @include moblie {
+        height: 80px;
+        width: 120px;
+      }
     }
 
     &::before {
@@ -597,6 +666,11 @@
           width: 160px;
           object-fit: cover;
           filter: grayscale(100%);
+
+          @include moblie {
+            height: 80px;
+            width: 120px;
+          }
 
           &:hover {
             transition: 0.3s;

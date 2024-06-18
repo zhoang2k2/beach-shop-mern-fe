@@ -1,10 +1,18 @@
+@import "../../mixins/mixins";
+
 .product-card {
+  width: 350px;
   padding: 0px 20px 20px;
   margin-top: 0 !important;
 
+  @include moblie {
+    width: 125px;
+    padding: 5px 10px 10px;
+  }
+
   &:hover {
     img {
-      transform: scale(1.5) rotate(25deg);
+      transform: scale(1.35) rotate(25deg);
     }
   }
 
@@ -16,6 +24,10 @@
         .ant-avatar-image {
           width: 100%;
           height: 300px;
+
+          @include moblie {
+            height: 100px;
+          }
 
           img {
             width: 100%;
@@ -33,6 +45,22 @@
         .ant-card-meta-title {
           font-size: 18px;
           padding-bottom: 5px;
+
+          @include moblie {
+            font-size: 14px;
+            padding-bottom: 0;
+          }
+        }
+
+        .ant-card-meta-description {
+          .product-content {
+            @include moblie {
+              span,
+              p {
+                font-size: 12px;
+              }
+            }
+          }
         }
       }
     }

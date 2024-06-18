@@ -90,7 +90,7 @@ function ProductCard({ renderItems, mode }: ProductCardProps) {
           mode === "shoppage" ? (
             <Card
               className="product-card"
-              style={{ width: 350, marginTop: 16 }}
+              style={{ marginTop: 16 }}
               loading={loading}
               key={item._id}
               hoverable
@@ -106,7 +106,6 @@ function ProductCard({ renderItems, mode }: ProductCardProps) {
             <Col className="gutter-row" span={1} key={item._id}>
               <Card
                 className="product-card"
-                style={{ width: "100%" }}
                 loading={loading}
                 hoverable
                 onClick={() => showModal(item)}

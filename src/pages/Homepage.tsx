@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Carousel, Col, Flex, Input, Row } from "antd";
 import {
   fetchProducts,
@@ -159,6 +160,11 @@ function Homepage() {
     }
   };
 
+  useEffect(() => {
+    handlePrev("top");
+    handlePrev("cheap");
+  }, []);
+
   const logos = [
     {
       id: "1",
@@ -220,7 +226,7 @@ function Homepage() {
 
   return (
     <>
-      <Carousel className="carousel-container" autoplay>
+      <Carousel className="carousel-container" draggable autoplay>
         <div className="carousel-content">
           <h3 style={contentStyle}>
             <img src="https://i.imgur.com/DSTBath.jpeg" style={imageStyle} />
